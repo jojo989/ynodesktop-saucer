@@ -17,3 +17,4 @@ Makefile
 .DS_Store
 *~
 .github/*.md
+!.github/README.md

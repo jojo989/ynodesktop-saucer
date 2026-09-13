@@ -21,8 +21,9 @@ file(GLOB_RECURSE SOURCE_FILES
 
 CPMAddPackage(
   NAME           saucer
-  VERSION        8.0.5
+  VERSION        8.2.0
   GIT_REPOSITORY "https://github.com/saucer/saucer"
+  GIT_TAG        "ver/8.2.0"
 )
 
 

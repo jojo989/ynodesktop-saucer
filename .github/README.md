@@ -2,6 +2,8 @@
 
 Directly inspired by and uses code from [github.com/affectioned/ynodesktop](https://github.com/affectioned/ynodesktop)
 
+please use the [codeberg repo](https://codeberg.org/silentclubstep/ynodesktop-saucer)
+
 ## Building
 
 This project uses CMake to build. Follow the instructions below for your platform.
@@ -40,4 +42,4 @@ and u done
 ## Dependencies
 
 This project automatically fetches the following dependency via CPM (C++ Package Manager):
-- **Saucer** 8.0.5 - A lightweight web framework for C++
+- **Saucer** 8.2.0 - A lightweight web framework for C++
