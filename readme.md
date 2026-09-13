@@ -9,7 +9,7 @@ This project uses CMake to build. Follow the instructions below for your platfor
 ### Prerequisites
 
 - **CMake** 3.28.0 or higher
-- **C++ Compiler** supporting C++23 standard (GCC 13+, Clang 16+, or MSVC 2022+)
+- **C++ Compiler** supporting C++23
 - **Git** (for fetching dependencies)
 
 ### Build Steps
@@ -35,26 +35,7 @@ This project uses CMake to build. Follow the instructions below for your platfor
    ```bash
    cmake --build . --config Release
    ```
-
-### Linux-Specific
-
-On Linux, the project automatically uses Qt as the Saucer backend. Ensure Qt development libraries are installed:
-
-**Ubuntu/Debian:**
-```bash
-sudo apt-get install qtbase5-dev
-```
-
-**Fedora:**
-```bash
-sudo dnf install qt5-qtbase-devel
-```
-
-### Output
-
-The compiled executable will be located in the `build/` directory:
-- Linux/macOS: `build/ynopdesktop`
-- Windows: `build/Release/ynopdesktop.exe`
+and u done
 
 ## Dependencies
 
