@@ -14,19 +14,16 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          # Windows build with MSVC
           - os: windows-latest
             c_compiler: cl
             cpp_compiler: cl
             build_type: Release
-            
-          # Linux build with GCC (modern version)
+
           - os: ubuntu-latest
             c_compiler: gcc
             cpp_compiler: g++
             build_type: Release
-            
-          # Linux build with Clang (modern version)
+
           - os: ubuntu-latest
             c_compiler: clang
             cpp_compiler: clang++
@@ -35,16 +32,20 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
-    # Update compiler toolchain on Linux
-    - name: Update Ubuntu packages and install modern compiler
+    - name: Install latest CMake and Ninja
+      uses: lukka/get-cmake@latest
+      with:
+        cmakeVersion: "latest"
+
+    - name: Install modern Clang on Ubuntu
       if: runner.os == 'Linux'
       run: |
-       sudo apt-get update
-       sudo apt-get install -y build-essential cmake git
-       sudo apt-get install -y clang-18 llvm-18
-       sudo update-alternatives --install /usr/bin/clang clang /usr/bin/clang-18 100
-       sudo update-alternatives --install /usr/bin/clang++ clang++ /usr/bin/clang++-18 100
-       clang++ --version
+        sudo apt-get update
+        sudo apt-get install -y build-essential git clang-18 llvm-18
+        sudo update-alternatives --install /usr/bin/clang clang /usr/bin/clang-18 100
+        sudo update-alternatives --install /usr/bin/clang++ clang++ /usr/bin/clang++-18 100
+        clang++ --version
+
     - name: Set reusable strings
       id: strings
       shell: bash
@@ -71,11 +72,9 @@ jobs:
       shell: bash
       run: |
         mkdir -p artifacts
-        # Copy binaries from build directory
         if [ -d "${{ steps.strings.outputs.build-output-dir }}" ]; then
           find "${{ steps.strings.outputs.build-output-dir }}" -type f \( -executable -o -name "*.exe" -o -name "*.dll" \) -exec cp {} artifacts/ \;
         fi
-        # If no binaries found, copy the entire build output
         if [ ! "$(ls -A artifacts)" ]; then
           cp -r "${{ steps.strings.outputs.build-output-dir }}"/* artifacts/ || true
         fi
