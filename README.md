@@ -4,7 +4,11 @@ Directly inspired by and uses code from [github.com/affectioned/ynodesktop](http
 
 this is a Desktop client for the website https://ynoproject.net/ so yeah PLEASE check the real website and support it!!!!!
 
-this is heavily unfinished. [TO-DO list](#TODO) 
+this is heavily unfinished. [TO-DO list](#todo)
+
+### Mirrors
+
+Saucer is available on: [GitHub](https://github.com/jojo989/ynodesktop-saucer), [Codeberg](https://codeberg.org/silentclubstep/ynodesktop-saucer)
 
 ## Building
 
