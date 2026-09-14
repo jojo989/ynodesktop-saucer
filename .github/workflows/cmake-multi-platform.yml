@@ -41,8 +41,8 @@ jobs:
       if: runner.os == 'Linux'
       run: |
         sudo apt-get update
-        sudo apt-get install -y build-essential git clang-18 llvm-18
-        sudo apt-get install -y libwebkitgtk-6.0-dev libgtk-4-dev gstreamer1.0-plugins-base gstreamer1.0-plugins-good
+        sudo apt-get install -y build-essential git clang-18 llvm-18 libgl1-mesa-dev libxkbcommon-dev
+        sudo apt-get install -y libwebkitgtk-6.0-dev libgtk-4-dev gstreamer1.0-plugins-base gstreamer1.0-plugins-good qt6-declarative-dev qt6-tools-dev-tools
         sudo update-alternatives --install /usr/bin/clang clang /usr/bin/clang-18 100
         sudo update-alternatives --install /usr/bin/clang++ clang++ /usr/bin/clang++-18 100
         clang++ --version
