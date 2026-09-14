@@ -10,7 +10,7 @@ if(NOT CMAKE_CONFIGURATION_TYPES)
 endif()
 
 if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
-  set(saucer_backend "Qt" CACHE STRING "Saucer backend" FORCE)
+  set(saucer_backend "WebKitGtk" CACHE STRING "Saucer backend" FORCE)
 endif()
 
 file(GLOB_RECURSE SOURCE_FILES 
