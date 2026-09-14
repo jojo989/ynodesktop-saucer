@@ -8,7 +8,7 @@ this is heavily unfinished. [TO-DO list](#todo)
 
 ### Mirrors
 
-Saucer is available on: [GitHub](https://github.com/jojo989/ynodesktop-saucer), [Codeberg](https://codeberg.org/silentclubstep/ynodesktop-saucer)
+ts is available on: [GitHub](https://github.com/jojo989/ynodesktop-saucer), [Codeberg](https://codeberg.org/silentclubstep/ynodesktop-saucer)
 
 ## Building
 
