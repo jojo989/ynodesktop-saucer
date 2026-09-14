@@ -1,6 +1,10 @@
-# ynodesktop-saucer
+# ynodesktop-saucer  <small>[please use the codeberg repo](https://codeberg.org/silentclubstep/ynodesktop-saucer)</small>
 
 Directly inspired by and uses code from [github.com/affectioned/ynodesktop](https://github.com/affectioned/ynodesktop)
+
+this is a Desktop client for the website https://ynoproject.net/ so yeah PLEASE check the real website and support it!!!!!
+
+this is heavily unfinished. [TO-DO list](#TODO) 
 
 ## Building
 
@@ -39,5 +43,10 @@ and u done
 
 ## Dependencies
 
-This project automatically fetches the following dependency via CPM (C++ Package Manager):
-- **Saucer** 8.2.0 - A lightweight web framework for C++
+This project automatically fetches the following dependency via [CPM](https://github.com/cpm-cmake/cpm.cmake) which is a Cmake package manager:
+- **Saucer** 8.2.0 - A lightweight web framework for C++ and itz very cool !!! ;3;
+
+## TODO
+ - [ ] cookies aka session save
+ - [ ] userscript suppor
+ - [ ] general code/performance improvmentz ig lol
