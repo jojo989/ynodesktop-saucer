@@ -1,7 +1,5 @@
 #include <cstdlib>
 
-#include <filesystem>
-
 #include "./app.hpp"
 
 namespace {
@@ -17,29 +15,18 @@ bool is_allowed_url(const saucer::url &url) {
          name == "cloudflare.com" ||
          (name.size() > 14 && name.ends_with(".cloudflare.com"));
 }
+
 }
 
-
-//ai written code ; TODO rewrite ts into smth good lol
 coco::stray start(saucer::application *app) {
   auto window = saucer::window::create(app).value();
   const bool hardware_acceleration =
       std::getenv("YNO_DISABLE_HARDWARE_ACCELERATION") == nullptr;
-  const auto storage_path =
-      std::filesystem::current_path() / ".yno-webengine-profile";
-  std::error_code storage_error;
-  std::filesystem::create_directories(storage_path, storage_error);
-  if (storage_error) {
-    std::println(stderr, "storage error: {}", storage_path.string(),
-                 storage_error.message());
-    co_return;
-  }
-
   auto webview = saucer::smartview::create(
                      {
                          .window = window,
+                         .persistent_cookies = true,
                          .hardware_acceleration = hardware_acceleration,
-                         .storage_path = storage_path,
                      })
                      .value();
 

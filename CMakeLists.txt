@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.28.0)
-project(ynopdesktop VERSION 0.1.0 LANGUAGES C CXX)
+project(ynopdesktop VERSION 0.1.1 LANGUAGES C CXX)
 include(cmake/CPM.cmake)
 
 set(CMAKE_CXX_STANDARD 23)
@@ -10,7 +10,7 @@ if(NOT CMAKE_CONFIGURATION_TYPES)
 endif()
 
 if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
-  set(saucer_backend "WebKitGtk" CACHE STRING "Saucer backend" FORCE)
+  set(saucer_backend "Qt" CACHE STRING "Saucer backend" FORCE)
 endif()
 
 file(GLOB_RECURSE SOURCE_FILES 

@@ -18,3 +18,5 @@ Makefile
 *~
 .github/*.md
 !.github/README.md
+.saucer
+./.saucer
