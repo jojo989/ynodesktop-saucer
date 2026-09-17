@@ -24,7 +24,7 @@ This project uses CMake to build. Follow the instructions below for your platfor
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/jojo989/ynodesktop-saucer.git
+   git clone https://codeberg.org/silentclubstep/ynodesktop-saucer.git
    cd ynodesktop-saucer
    ```
 
