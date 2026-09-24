@@ -7,6 +7,18 @@ this is a Desktop client for the website https://ynoproject.net/ so yeah PLEASE 
 this is heavily unfinished. [TO-DO list](#todo)
 
 ## userscripts warning
+
+   to add userscripts you need to add a folder on the folder where the binary/executable is located
+   example:
+   ```
+   .
+├── userscripts
+│   ├── get-current-pos.user.js
+│   ├── yno-commumoji.user.js
+│   └── yno_imagefy.user.js
+└── ynopdesktop
+```
+
    some of them might require little modifications i think idk i havent tested it d:
    theres some of them here https://github.com/goobert/awesome-yno
 
