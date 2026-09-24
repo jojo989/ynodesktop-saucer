@@ -6,6 +6,10 @@ this is a Desktop client for the website https://ynoproject.net/ so yeah PLEASE 
 
 this is heavily unfinished. [TO-DO list](#todo)
 
+## userscripts warning
+   some of them might require little modifications i think idk i havent tested it d:
+   theres some of them here https://github.com/goobert/awesome-yno
+
 ### Mirrors
 
 ts is available on: [GitHub](https://github.com/jojo989/ynodesktop-saucer), [Codeberg](https://codeberg.org/silentclubstep/ynodesktop-saucer)
@@ -51,6 +55,6 @@ This project automatically fetches the following dependency via [CPM](https://gi
 - **Saucer** 8.2.0 - A lightweight web framework for C++ and itz very cool !!! ;3;
 
 ## TODO
- - [ ] cookies aka session save
- - [ ] userscript suppor
+ - [x] cookies aka session save
+ - [x] userscript suppor
  - [ ] general code/performance improvmentz ig lol

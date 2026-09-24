@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.28.0)
-project(ynopdesktop VERSION 0.1.1 LANGUAGES C CXX)
+project(ynopdesktop VERSION 0.2 LANGUAGES C CXX)
 include(cmake/CPM.cmake)
 
 set(CMAKE_CXX_STANDARD 23)
@@ -26,9 +26,10 @@ CPMAddPackage(
   GIT_TAG        "ver/8.2.0"
 )
 
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
 add_executable(ynopdesktop ${SOURCE_FILES})
 
 target_link_libraries(${PROJECT_NAME} PRIVATE saucer::saucer)
 
-
+# target_compile_options(${PROJECT_NAME} PRIVATE -Wall -Wextra -Wpedantic)
