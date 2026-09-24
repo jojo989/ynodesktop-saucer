@@ -4,7 +4,7 @@ namespace fs = std::filesystem;
 
 namespace
 {
-  fs::path userscripts_directory() {
+  fs::path userscriptsDirectory() {
     std::error_code error;
     const auto executable = fs::read_symlink("/proc/self/exe", error);
     if (!error)
@@ -19,7 +19,7 @@ namespace
     return fs::current_path() / "userscripts";
   }
 
-  bool is_allowed_url(const saucer::url& url) {
+  bool isAllowedUrl(const saucer::url& url) {
     const auto host = url.host();
     if (url.scheme() != "https" || !host) {
       return false;
@@ -33,7 +33,7 @@ namespace
   }
 }
 
-void install_userscript_compatibility(saucer::smartview& webview) {
+void installUserScriptCompatibility(saucer::smartview& webview) {
   webview.inject({
     .code = R"js(
       (() => {
@@ -54,10 +54,10 @@ void install_userscript_compatibility(saucer::smartview& webview) {
     });
 }
 
-void load_user_scripts(saucer::smartview& webview) {
-  const auto userscripts_path = userscripts_directory();
+void loadUserScripts(saucer::smartview& webview) {
+  const auto userscriptsPath = userscriptsDirectory();
   std::error_code error;
-  fs::create_directories(userscripts_path, error);
+  fs::create_directories(userscriptsPath, error);
 
   if (error)
   {
@@ -65,8 +65,8 @@ void load_user_scripts(saucer::smartview& webview) {
     return;
   }
 
-  std::vector<fs::path> script_paths;
-  for (const auto& entry : fs::directory_iterator(userscripts_path, error))
+  std::vector<fs::path> scriptPaths;
+  for (const auto& entry : fs::directory_iterator(userscriptsPath, error))
   {
     if (error)
     {
@@ -79,7 +79,7 @@ void load_user_scripts(saucer::smartview& webview) {
       continue;
     }
 
-    script_paths.push_back(entry.path());
+    scriptPaths.push_back(entry.path());
   }
 
   if (error)
@@ -88,15 +88,15 @@ void load_user_scripts(saucer::smartview& webview) {
     return;
   }
 
-  std::ranges::sort(script_paths);
+  std::ranges::sort(scriptPaths);
 
-  for (const auto& script_path : script_paths)
+  for (const auto& scriptPath : scriptPaths)
   {
-    std::ifstream script_file(script_path);
-    const std::string code((std::istreambuf_iterator<char>(script_file)), {});
-    if (!script_file)
+    std::ifstream scriptFile(scriptPath);
+    const std::string code((std::istreambuf_iterator<char>(scriptFile)), {});
+    if (!scriptFile)
     {
-      std::println(stderr, "Failed to read userscript: {}", script_path.string());
+      std::println(stderr, "Failed to read userscript: {}", scriptPath.string());
       continue;
     }
 
@@ -109,13 +109,13 @@ void load_user_scripts(saucer::smartview& webview) {
 
 coco::stray start(saucer::application* app) {
   auto window = saucer::window::create(app).value();
-  const bool hardware_acceleration =
+  const bool hardwareAcceleration =
     std::getenv("YNO_DISABLE_HARDWARE_ACCELERATION") == nullptr;
   auto webview = saucer::smartview::create(
     {
         .window = window,
         .persistent_cookies = true,
-        .hardware_acceleration = hardware_acceleration,
+        .hardware_acceleration = hardwareAcceleration,
     })
     .value();
 
@@ -131,8 +131,8 @@ coco::stray start(saucer::application* app) {
   window->set_decorations(saucer::window::decoration::none);
 
   webview.set_context_menu(true);
-  install_userscript_compatibility(webview);
-  load_user_scripts(webview);
+  installUserScriptCompatibility(webview);
+  loadUserScripts(webview);
   webview.set_url("https://ynoproject.net/");
 
 
@@ -200,12 +200,12 @@ coco::stray start(saucer::application* app) {
       const auto url = nav.url();
 
       if (nav.new_window()) {
-        if (!is_allowed_url(url)) {
+        if (!isAllowedUrl(url)) {
           return saucer::policy::block;
         }
 
-        auto* webview_ptr = &webview;
-        app->post([webview_ptr, url] { webview_ptr->set_url(url); });
+        auto* webviewPtr = &webview;
+        app->post([webviewPtr, url] { webviewPtr->set_url(url); });
         return saucer::policy::block;
       }
 

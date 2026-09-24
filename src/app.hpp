@@ -9,5 +9,5 @@
 #include <vector>
 
 coco::stray start(saucer::application *app);
-void install_userscript_compatibility(saucer::smartview&);
-void load_user_scripts(saucer::smartview&);
+void installUserScriptCompatibility(saucer::smartview&);
+void loadUserScripts(saucer::smartview&);
