@@ -28,7 +28,9 @@ CPMAddPackage(
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
-add_executable(ynopdesktop ${SOURCE_FILES})
+add_executable(ynopdesktop ${SOURCE_FILES}
+  src/utils.cpp
+  src/utils.hpp)
 
 target_link_libraries(${PROJECT_NAME} PRIVATE saucer::saucer)
 

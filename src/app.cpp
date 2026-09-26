@@ -1,4 +1,5 @@
 #include "./app.hpp"
+#include "./utils.hpp"
 
 namespace fs = std::filesystem;
 
@@ -116,6 +117,8 @@ coco::stray start(saucer::application* app) {
         .window = window,
         .persistent_cookies = true,
         .hardware_acceleration = hardwareAcceleration,
+        .storage_path = getDataDir("yumenikkionline_saucer")
+
     })
     .value();
 
