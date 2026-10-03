@@ -4,7 +4,7 @@ Directly inspired by and uses code from [github.com/affectioned/ynodesktop](http
 
 this is a Desktop client for the website https://ynoproject.net/ so yeah PLEASE check the real website and support it!!!!!
 
-this is heavily unfinished. [TO-DO list](#todo)
+this is not heavily unfinished anymore!! its perfectly usable. [TO-DO list](#todo)
 
 ## userscripts warning
 
@@ -61,12 +61,15 @@ This project uses CMake to build. Follow the instructions below for your platfor
    ```
 and u done
 
-## Dependencies
+## Dependencies and Thanks
 
 This project automatically fetches the following dependency via [CPM](https://github.com/cpm-cmake/cpm.cmake) which is a Cmake package manager:
 - **Saucer** 8.2.0 - A lightweight web framework for C++ and itz very cool !!! ;3;
 
+- [**Eclipse discord rpc library**](https://git.eclipse.menu/EclipseMenu/discord-presence) please support them and The entire geode project !!
+
 ## TODO
  - [x] cookies aka session save
  - [x] userscript suppor
+ - [x] discord rich presence 
  - [ ] general code/performance improvmentz ig lol

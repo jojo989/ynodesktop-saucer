@@ -26,12 +26,19 @@ CPMAddPackage(
   GIT_TAG        "ver/8.2.0"
 )
 
+CPMAddPackage(
+  NAME discord-rpc
+  GIT_REPOSITORY "https://git.eclipse.menu/EclipseMenu/discord-presence"
+  GIT_TAG "3b50b0854e"
+)
+
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
 add_executable(ynopdesktop ${SOURCE_FILES}
   src/utils.cpp
-  src/utils.hpp)
+  src/utils.hpp
+  src/rpc.cpp)
 
 target_link_libraries(${PROJECT_NAME} PRIVATE saucer::saucer)
-
+target_link_libraries(${PROJECT_NAME} PRIVATE discord-rpc)
 # target_compile_options(${PROJECT_NAME} PRIVATE -Wall -Wextra -Wpedantic)

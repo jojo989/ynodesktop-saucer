@@ -21,17 +21,17 @@ namespace fs = std::filesystem;
 
 #ifdef _WIN32
 
-std::wstring GetLocalAppData() {
+std::wstring getLocalAppData() {
     PWSTR pszPath = NULL;
     std::wstring result = L"";
 
     HRESULT hr = SHGetKnownFolderPath(FOLDERID_LocalAppData, 0, NULL, &pszPath);
-    
+
     if (SUCCEEDED(hr)) {
         result = pszPath;
         CoTaskMemFree(pszPath);
     }
-    
+
     return result; // empty if fail
 }
 
@@ -52,7 +52,39 @@ fs::path getDataDir(std::string_view appName) {
     }
 
     fs::path dataDir(localAppData);
-    
-    return dataDir / appName; 
+
+    return dataDir / appName;
 #endif
+}
+
+std::optional<std::string> parseGameName(std::string_view url) {
+    constexpr std::string_view host = "ynoproject.net/";
+
+    auto pos = url.find(host);
+    if (pos == std::string_view::npos)
+        return {};
+
+    auto rest = url.substr(pos + host.size());
+    auto end = rest.find_first_of("/?#");
+    auto name = rest.substr(0, end);
+
+    if (name.empty())
+        return {};
+
+    return std::string(name);
+}
+
+std::string urlEncode(std::string_view s) {
+    static constexpr char hex[] = "0123456789ABCDEF";
+    std::string out;
+    for (unsigned char c : s) {
+        if (std::isalnum(c) || c == '-' || c == '_' || c == '.' || c == '~')
+            out += static_cast<char>(c);
+        else {
+            out += '%';
+            out += hex[c >> 4];
+            out += hex[c & 15];
+        }
+    }
+    return out;
 }

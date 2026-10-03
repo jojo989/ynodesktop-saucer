@@ -1,5 +1,6 @@
 #include "./app.hpp"
 #include "./utils.hpp"
+#include "./rpc.hpp"
 
 namespace fs = std::filesystem;
 
@@ -109,6 +110,8 @@ void loadUserScripts(saucer::smartview& webview) {
 }
 
 coco::stray start(saucer::application* app) {
+  RPC richPrecence{};
+  richPrecence.start();
   auto window = saucer::window::create(app).value();
   const bool hardwareAcceleration =
     std::getenv("YNO_DISABLE_HARDWARE_ACCELERATION") == nullptr;
@@ -125,6 +128,17 @@ coco::stray start(saucer::application* app) {
   webview.expose("yno_set_fullscreen", [window](bool enabled) {
     window->set_fullscreen(enabled);
     });
+
+  webview.expose("update_rpc", [&](std::string url, std::string room) {
+    auto game = parseGameName(url);
+    if (!game) {
+      richPrecence.setBasic();
+      return;
+    }
+    
+    richPrecence.update(*game, room);
+    });
+
 
   window->set_title("Yume Nikki Online Project");
   window->set_size({ .w = 1052, .h = 798 });
@@ -197,6 +211,44 @@ coco::stray start(saucer::application* app) {
         )js",
         .run_at = saucer::script::time::ready,
     });
+
+  // rpc lmao, sorry for ts being ai generated but i dont know and i dont like javascript
+  webview.inject({
+      .code = R"js(
+      (() => {
+  if (window.__ynoRpc) return;
+  window.__ynoRpc = true;
+
+  const MAX_STATE = 128;
+  let lastKey = "";
+
+  const readRoom = () =>
+    [...(document.querySelector("#locationText a")?.innerText || "")]
+      .slice(0, MAX_STATE)
+      .join("");
+
+  const tick = () => {
+    if (!window.saucer?.exposed?.update_rpc) return;
+
+    const url = location.href;
+    const room = readRoom();
+    const key = `${url}|${room}`;
+    if (key === lastKey) return;
+    lastKey = key;
+
+    Promise.resolve(window.saucer.exposed.update_rpc(url, room)).catch((e) => {
+      lastKey = "";
+      console.warn("ynorpc:", e);
+    });
+  };
+
+  setInterval(tick, 2000);
+  tick();
+  })();
+    )js",
+    .run_at = saucer::script::time::ready,
+    });
+
 
   webview.on<saucer::webview::event::navigate>(
     [&webview, app](const saucer::navigation& nav) -> saucer::policy {
