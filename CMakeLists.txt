@@ -13,6 +13,14 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
   set(saucer_backend "Qt" CACHE STRING "Saucer backend" FORCE)
 endif()
 
+if(CLANG_TIDY_EXE)
+
+    set(CMAKE_CXX_CLANG_TIDY 
+        ${CLANG_TIDY_EXE}
+        "-checks=-*,bugprone-*,modernize-*,performance-*,readability-*"
+        "-warnings-as-errors=*")
+endif()
+
 file(GLOB_RECURSE SOURCE_FILES 
     "src/*.cpp"
     "src/*.cxx"
@@ -34,11 +42,8 @@ CPMAddPackage(
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
-add_executable(ynopdesktop ${SOURCE_FILES}
-  src/utils.cpp
-  src/utils.hpp
-  src/rpc.cpp)
+add_executable(ynopdesktop ${SOURCE_FILES})
 
 target_link_libraries(${PROJECT_NAME} PRIVATE saucer::saucer)
 target_link_libraries(${PROJECT_NAME} PRIVATE discord-rpc)
-# target_compile_options(${PROJECT_NAME} PRIVATE -Wall -Wextra -Wpedantic)
+target_compile_options(${PROJECT_NAME} PRIVATE -Wall -Wextra -Wpedantic)

@@ -1,10 +1,14 @@
+#include <discord-rpc.hpp>
+#include <print>
+#include <string_view>
+
 #include "./rpc.hpp"
 #include <discord-rpc.hpp>
 #include "./utils.hpp"
 
 #define APP_ID "1554975882517413968"
 
-void RPC::start() {
+RPC::RPC() {
     discord::RPCManager::get()
         .setClientID(APP_ID)
         .onReady([](discord::User user) {
@@ -19,38 +23,39 @@ void RPC::start() {
     m_isReady = true;
 };
 
+RPC::~RPC(){
+    discord::RPCManager::get().clearPresence();
+    discord::RPCManager::get().shutdown();
+}
+
 void RPC::update(const std::string& game, const std::string& room) {
     if (!m_isReady) return;
 
-    const std::string state = room.empty() ? "Going to bed…" : room;
+    State next{ std::string(game), std::string(room) };
+    if (m_last == next) return;
+    m_last = std::move(next);
 
-    std::string largeImage = game.empty() ? "yno-logo" : game;
-
-    std::println("game: {}, largeimage: {}", game, largeImage);
-
-    const std::string key = game + '\n' + state;
-    if (key == m_lastKey) return;
-    m_lastKey = key;
+    const std::string state = m_last->room.empty()
+        ? std::string("Going to bed…")
+        : m_last->room;
 
     discord::RPCManager::get()
         .getPresence()
-        .setState("Yume Nikki Online")
-        .setLargeImageKey(largeImage)
-        .setLargeImageText(game)
+        .setLargeImageKey(m_last->game)
+        .setLargeImageText(m_last->game)
         .setSmallImageKey("yno-logo")
         .setSmallImageText("YNOProject")
-        .setDetails(std::format("Dreaming on {}…", game))
+        .setDetails(std::format("Dreaming on {}…", m_last->game))
         .setState(state)
         .refresh();
 }
 
 void RPC::setBasic() {
     if (!m_isReady) return;
-    m_lastGame.clear();
 
-    const std::string key = "\nbasic";
-    if (key == m_lastKey) return;
-    m_lastKey = key;
+    State next{};
+    if (m_last == next) return;
+    m_last = std::move(next);
 
     discord::RPCManager::get()
         .getPresence()
@@ -59,7 +64,3 @@ void RPC::setBasic() {
         .setState("Choosing a door...")
         .refresh();
 }
-
-void RPC::clear() {
-    discord::RPCManager::get().clearPresence();
-};

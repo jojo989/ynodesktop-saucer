@@ -1,3 +1,10 @@
+#include <print>
+#include <cstdlib>
+#include <algorithm>
+#include <filesystem>
+#include <fstream>
+#include <vector>
+
 #include "./app.hpp"
 #include "./utils.hpp"
 #include "./rpc.hpp"
@@ -111,7 +118,6 @@ void loadUserScripts(saucer::smartview& webview) {
 
 coco::stray start(saucer::application* app) {
   RPC richPrecence{};
-  richPrecence.start();
   auto window = saucer::window::create(app).value();
   const bool hardwareAcceleration =
     std::getenv("YNO_DISABLE_HARDWARE_ACCELERATION") == nullptr;
@@ -129,7 +135,7 @@ coco::stray start(saucer::application* app) {
     window->set_fullscreen(enabled);
     });
 
-  webview.expose("update_rpc", [&](std::string url, std::string room) {
+  webview.expose("update_rpc", [&richPrecence](std::string url, std::string room) {
     auto game = parseGameName(url);
     if (!game) {
       richPrecence.setBasic();
@@ -259,8 +265,7 @@ coco::stray start(saucer::application* app) {
           return saucer::policy::block;
         }
 
-        auto* webviewPtr = &webview;
-        app->post([webviewPtr, url] { webviewPtr->set_url(url); });
+        app->post([&webview, url] { webview.set_url(url); });
         return saucer::policy::block;
       }
 

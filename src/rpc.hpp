@@ -1,22 +1,23 @@
 #pragma once
 #include <string>
-#include <discord-rpc.hpp>
-#include <print>
-#include <string_view>
+
 
 class RPC {
 public:
-    RPC() = default;
+    RPC();
+    ~RPC();
     RPC(const RPC&) = delete;
+    RPC& operator=(const RPC&) = delete;
 
-    void start();
     void update(const std::string& game,const std::string& room);
     void setBasic();
     void clear();
 
 private:
-    bool m_isReady{ false };
-    std::string m_lastKey{};
-    std::string m_lastGame{};
-    std::string m_lastRoom{};
+    struct State {
+        std::string game, room;
+        bool operator==(const State&) const = default;
+    };
+    std::optional<State> m_last;
+    std::atomic<bool>    m_isReady{false};
 };
