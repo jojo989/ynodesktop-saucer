@@ -1,12 +1,12 @@
+#include <cstdint>
 #include <discord-rpc.hpp>
 #include <print>
 #include <string_view>
 
 #include "./rpc.hpp"
 #include <discord-rpc.hpp>
-#include "./utils.hpp"
 
-#define APP_ID "1554975882517413968"
+constexpr const char* APP_ID{"1554975882517413968"};
 
 RPC::RPC() {
     discord::RPCManager::get()
@@ -28,8 +28,10 @@ RPC::~RPC(){
     discord::RPCManager::get().shutdown();
 }
 
-void RPC::update(const std::string& game, const std::string& room) {
+void RPC::update(std::string_view game,std::string_view room) {
     if (!m_isReady) return;
+
+    if (m_last && m_last->game == game && m_last->room == room) return;
 
     State next{ std::string(game), std::string(room) };
     if (m_last == next) return;

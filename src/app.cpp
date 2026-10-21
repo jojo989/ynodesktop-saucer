@@ -1,50 +1,47 @@
-#include <print>
-#include <cstdlib>
 #include <algorithm>
+#include <cstdlib>
 #include <filesystem>
 #include <fstream>
+#include <print>
 #include <vector>
 
 #include "./app.hpp"
-#include "./utils.hpp"
 #include "./rpc.hpp"
+#include "./utils.hpp"
 
 namespace fs = std::filesystem;
 
-namespace
-{
-  fs::path userscriptsDirectory() {
-    std::error_code error;
-    const auto executable = fs::read_symlink("/proc/self/exe", error);
-    if (!error)
-    {
-      const auto adjacent = executable.parent_path() / "userscripts";
-      if (fs::exists(adjacent, error) && fs::is_directory(adjacent, error))
-      {
-        return adjacent;
-      }
+namespace {
+fs::path userscriptsDirectory() {
+  std::error_code error;
+  const auto executable = fs::read_symlink("/proc/self/exe", error);
+  if (!error) {
+    const auto adjacent = executable.parent_path() / "userscripts";
+    if (fs::exists(adjacent, error) && fs::is_directory(adjacent, error)) {
+      return adjacent;
     }
-
-    return fs::current_path() / "userscripts";
   }
 
-  bool isAllowedUrl(const saucer::url& url) {
-    const auto host = url.host();
-    if (url.scheme() != "https" || !host) {
-      return false;
-    }
-
-    const auto& name = *host;
-    return name == "ynoproject.net" ||
-      (name.size() > 14 && name.ends_with(".ynoproject.net")) ||
-      name == "cloudflare.com" ||
-      (name.size() > 14 && name.ends_with(".cloudflare.com"));
-  }
+  return fs::current_path() / "userscripts";
 }
+
+bool isAllowedUrl(const saucer::url& url) {
+  const auto host = url.host();
+  if (url.scheme() != "https" || !host) {
+    return false;
+  }
+
+  const auto& name = *host;
+  return name == "ynoproject.net" ||
+         (name.size() > 15 && name.ends_with(".ynoproject.net")) ||
+         name == "cloudflare.com" ||
+         (name.size() > 15 && name.ends_with(".cloudflare.com"));
+}
+} // namespace
 
 void installUserScriptCompatibility(saucer::smartview& webview) {
   webview.inject({
-    .code = R"js(
+      .code = R"js(
       (() => {
         if (!window.unsafeWindow) {
           window.unsafeWindow = window;
@@ -59,8 +56,8 @@ void installUserScriptCompatibility(saucer::smartview& webview) {
         }
       })();
     )js",
-    .run_at = saucer::script::time::creation,
-    });
+      .run_at = saucer::script::time::creation,
+  });
 }
 
 void loadUserScripts(saucer::smartview& webview) {
@@ -68,43 +65,36 @@ void loadUserScripts(saucer::smartview& webview) {
   std::error_code error;
   fs::create_directories(userscriptsPath, error);
 
-  if (error)
-  {
+  if (error) {
     std::println(stderr, "Failed to create userscripts directory: {}", error.message());
     return;
   }
 
   std::vector<fs::path> scriptPaths;
-  for (const auto& entry : fs::directory_iterator(userscriptsPath, error))
-  {
-    if (error)
-    {
+  for (const auto& entry : fs::directory_iterator(userscriptsPath, error)) {
+    if (error) {
       std::println(stderr, "Failed to read userscripts directory: {}", error.message());
       return;
     }
 
-    if (!entry.is_regular_file() || entry.path().extension() != ".js")
-    {
+    if (!entry.is_regular_file() || entry.path().extension() != ".js") {
       continue;
     }
 
     scriptPaths.push_back(entry.path());
   }
 
-  if (error)
-  {
+  if (error) {
     std::println(stderr, "Failed to read userscripts directory: {}", error.message());
     return;
   }
 
   std::ranges::sort(scriptPaths);
 
-  for (const auto& scriptPath : scriptPaths)
-  {
+  for (const auto& scriptPath : scriptPaths) {
     std::ifstream scriptFile(scriptPath);
     const std::string code((std::istreambuf_iterator<char>(scriptFile)), {});
-    if (!scriptFile)
-    {
+    if (!scriptFile) {
       std::println(stderr, "Failed to read userscript: {}", scriptPath.string());
       continue;
     }
@@ -112,7 +102,7 @@ void loadUserScripts(saucer::smartview& webview) {
     webview.inject({
         .code = code,
         .run_at = saucer::script::time::ready,
-      });
+    });
   }
 }
 
@@ -120,20 +110,19 @@ coco::stray start(saucer::application* app) {
   RPC richPrecence{};
   auto window = saucer::window::create(app).value();
   const bool hardwareAcceleration =
-    std::getenv("YNO_DISABLE_HARDWARE_ACCELERATION") == nullptr;
+      std::getenv("YNO_DISABLE_HARDWARE_ACCELERATION") == nullptr;
   auto webview = saucer::smartview::create(
-    {
-        .window = window,
-        .persistent_cookies = true,
-        .hardware_acceleration = hardwareAcceleration,
-        .storage_path = getDataDir("yumenikkionline_saucer")
+                     { .window = window,
+                       .persistent_cookies = true,
+                       .hardware_acceleration = hardwareAcceleration,
+                       .storage_path = getDataDir("yumenikkionline_saucer")
 
-    })
-    .value();
+                     })
+                     .value();
 
   webview.expose("yno_set_fullscreen", [window](bool enabled) {
     window->set_fullscreen(enabled);
-    });
+  });
 
   webview.expose("update_rpc", [&richPrecence](std::string url, std::string room) {
     auto game = parseGameName(url);
@@ -141,27 +130,21 @@ coco::stray start(saucer::application* app) {
       richPrecence.setBasic();
       return;
     }
-    
+
     richPrecence.update(*game, room);
-    });
+  });
 
-
-  window->set_title("Yume Nikki Online Project");
-  window->set_size({ .w = 1052, .h = 798 });
-  window->set_background({ .r = 0, .g = 0, .b = 0, .a = 255 });
+  configureWindow(window);
   webview.set_background({ .r = 0, .g = 0, .b = 0, .a = 255 });
-
-  window->set_decorations(saucer::window::decoration::none);
 
   webview.set_context_menu(true);
   installUserScriptCompatibility(webview);
   loadUserScripts(webview);
   webview.set_url("https://ynoproject.net/");
 
-
   //  CREDIT BY https://github.com/affectioned/ynodesktop
   webview.inject({
-    .code = R"js(
+      .code = R"js(
             (() => {
                 if (document.getElementById("ynod-titlebar")) return;
 
@@ -215,8 +198,8 @@ coco::stray start(saucer::application* app) {
 
             })();
         )js",
-        .run_at = saucer::script::time::ready,
-    });
+      .run_at = saucer::script::time::ready,
+  });
 
   // rpc lmao, sorry for ts being ai generated but i dont know and i dont like javascript
   webview.inject({
@@ -252,27 +235,26 @@ coco::stray start(saucer::application* app) {
   tick();
   })();
     )js",
-    .run_at = saucer::script::time::ready,
-    });
+      .run_at = saucer::script::time::ready,
+  });
 
+webview.on<saucer::webview::event::navigate>(
+      [&webview, app](const saucer::navigation& nav) -> saucer::policy {
+        const auto url = nav.url();
 
-  webview.on<saucer::webview::event::navigate>(
-    [&webview, app](const saucer::navigation& nav) -> saucer::policy {
-      const auto url = nav.url();
+        if (nav.new_window()) {
+          if (!isAllowedUrl(url)) {
+            return saucer::policy::block;
+          }
 
-      if (nav.new_window()) {
-        if (!isAllowedUrl(url)) {
+          app->post([&webview, url] { webview.set_url(url); });
           return saucer::policy::block;
         }
 
-        app->post([&webview, url] { webview.set_url(url); });
-        return saucer::policy::block;
-      }
-
-      /* return is_allowed_url(url) ? saucer::policy::allow
-                                 : saucer::policy::block; */
-      return saucer::policy::allow;
-    });
+        /* return is_allowed_url(url) ? saucer::policy::allow
+                                   : saucer::policy::block; */
+        return saucer::policy::allow;
+      });
 
   webview.on<saucer::webview::event::fullscreen>([](bool fullscreened) -> saucer::policy {
     if (fullscreened) {
@@ -280,7 +262,7 @@ coco::stray start(saucer::application* app) {
       return saucer::policy::allow;
     }
     return saucer::policy::allow;
-    });
+  });
 
   window->show();
 

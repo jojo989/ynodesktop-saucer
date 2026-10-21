@@ -10,7 +10,7 @@ public:
     RPC(const RPC&) = delete;
     RPC& operator=(const RPC&) = delete;
 
-    void update(const std::string& game,const std::string& room);
+    void update(std::string_view game, std::string_view room);
     void setBasic();
     void clear();
 

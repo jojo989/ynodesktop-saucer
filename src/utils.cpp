@@ -54,7 +54,11 @@ fs::path getDataDir(std::string_view appName) {
     fs::path dataDir(localAppData);
 
     return dataDir / appName;
+
+#else 
+    throw std::runtime_error("Platform not supported at this moment lool!");
 #endif
+
 }
 
 std::optional<std::string> parseGameName(std::string_view url) {
