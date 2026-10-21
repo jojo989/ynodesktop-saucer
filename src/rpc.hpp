@@ -1,6 +1,7 @@
 #pragma once
 #include <string>
-
+#include <optional>
+#include <atomic>
 
 class RPC {
 public:
