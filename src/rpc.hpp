@@ -1,24 +1,24 @@
 #pragma once
-#include <string>
-#include <optional>
 #include <atomic>
+#include <optional>
+#include <string>
 
 class RPC {
 public:
-    RPC();
-    ~RPC();
-    RPC(const RPC&) = delete;
-    RPC& operator=(const RPC&) = delete;
+  RPC();
+  ~RPC();
+  RPC(const RPC&) = delete;
+  RPC& operator=(const RPC&) = delete;
 
-    void update(std::string_view game, std::string_view room);
-    void setBasic();
-    void clear();
+  void update(std::string_view game, std::string_view room);
+  void setBasic();
+  void clear();
 
 private:
-    struct State {
-        std::string game, room;
-        bool operator==(const State&) const = default;
-    };
-    std::optional<State> m_last;
-    std::atomic<bool>    m_isReady{false};
+  struct State {
+    std::string game, room;
+    bool operator==(const State&) const = default;
+  };
+  std::optional<State> m_last;
+  std::atomic<bool> m_isReady{ false };
 };

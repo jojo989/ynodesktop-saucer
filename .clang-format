@@ -1,0 +1,6 @@
+BasedOnStyle: Microsoft
+BreakBeforeBraces: Attach
+Cpp11BracedListStyle: false
+PointerAlignment: Left
+IndentWidth: 2
+ColumnLimit: 0

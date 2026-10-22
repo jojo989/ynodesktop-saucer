@@ -1,13 +1,15 @@
 #include <algorithm>
-#include <cstdlib>
 #include <filesystem>
 #include <fstream>
+#include <optional>
 #include <print>
 #include <vector>
 
 #include "./app.hpp"
 #include "./rpc.hpp"
 #include "./utils.hpp"
+#include "saucer/smartview.hpp"
+#include "saucer/webview.hpp"
 
 namespace fs = std::filesystem;
 
@@ -109,20 +111,7 @@ void loadUserScripts(saucer::smartview& webview) {
 coco::stray start(saucer::application* app) {
   RPC richPrecence{};
   auto window = saucer::window::create(app).value();
-  const bool hardwareAcceleration =
-      std::getenv("YNO_DISABLE_HARDWARE_ACCELERATION") == nullptr;
-  auto webview = saucer::smartview::create(
-                     { .window = window,
-                       .persistent_cookies = true,
-                       .hardware_acceleration = hardwareAcceleration,
-                       .storage_path = getDataDir("yumenikkionline_saucer")
-
-                     })
-                     .value();
-
-  webview.expose("yno_set_fullscreen", [window](bool enabled) {
-    window->set_fullscreen(enabled);
-  });
+  saucer::smartview webview{ setupWebView(window, getDataDir("yumenikkionline_saucer")) };
 
   webview.expose("update_rpc", [&richPrecence](std::string url, std::string room) {
     auto game = parseGameName(url);
@@ -238,7 +227,7 @@ coco::stray start(saucer::application* app) {
       .run_at = saucer::script::time::ready,
   });
 
-webview.on<saucer::webview::event::navigate>(
+  webview.on<saucer::webview::event::navigate>(
       [&webview, app](const saucer::navigation& nav) -> saucer::policy {
         const auto url = nav.url();
 
@@ -267,4 +256,30 @@ webview.on<saucer::webview::event::navigate>(
   window->show();
 
   co_await app->finish();
+}
+
+void configureWindow(std::shared_ptr<saucer::window> window) {
+  window->set_title("Yume Nikki Online Project");
+  window->set_size({ .w = 1052, .h = 798 });
+  window->set_background({ .r = 0, .g = 0, .b = 0, .a = 255 });
+  window->set_decorations(saucer::window::decoration::none);
+}
+
+saucer::smartview setupWebView(std::shared_ptr<saucer::window> window, std::filesystem::path storagePath, bool hardwareAccel) {
+  saucer::smartview webview{ saucer::smartview::create(
+                                 { .window = window,
+                                   .persistent_cookies = true,
+                                   .hardware_acceleration = hardwareAccel,
+                                   .storage_path = storagePath,
+                                   .user_agent = std::nullopt,
+                                   .browser_flags = { std::string{} }
+
+                                 })
+                                 .value() };
+
+  webview.expose("yno_set_fullscreen", [window](bool enabled) {
+    window->set_fullscreen(enabled);
+  });
+
+  return webview;
 }
